@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Crencrew League 2026 — Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0a1e;--bg2:#14102e;--panel:#1c1640;--panel2:#241e4a;--accent:#00e6b8;--gold:#facc15;--text:#f8fafc;--muted:#94a3b8;--danger:#f43f5e;--line:rgba(255,255,255,.08);--p:#facc15;--d:#34d399;--c:#60a5fa;--a:#fb7185}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden}
+h1,h2,h3,h4{font-family:Montserrat,sans-serif}
+.site-header{height:52px;background:linear-gradient(90deg,#0f0a2a,#1a1240);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.menu-btn{background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--text);padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer}
+.hdr-center{display:flex;align-items:center;gap:10px}
+.pill-btn{background:#1e1b4b;border:1px solid var(--line);color:var(--text);padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer}
+.logo-white svg{height:28px}
+.role-badge{background:var(--accent);color:#062e26;padding:7px 14px;border-radius:20px;font-weight:900;font-size:12px}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.btn-hdr{background:transparent;border:1px solid var(--line);color:var(--text);padding:7px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer}
+.btn-hdr:hover{background:rgba(255,255,255,.06)}
+.exp-link{color:var(--accent);border:1px solid rgba(0,230,184,.3);padding:7px 12px;border-radius:8px;font-size:12px;font-weight:800;text-decoration:none;background:transparent;cursor:pointer;font-family:Inter,Arial,sans-serif}
+.exp-link:hover{background:var(--accent);color:#062e26}
+.shell{display:grid;grid-template-columns:1fr 280px;height:calc(100vh - 52px)}
+.main{overflow:auto;background:radial-gradient(1200px 600px at 20% 0%, #1e1040 0%, var(--bg) 60%);min-width:0}
+.sidebar{background:var(--bg2);border-left:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+.player-zone{padding:16px 14px 12px}
+.player-card{position:relative;background:linear-gradient(135deg,#120c2e 0%, #1a103e 60%, #1a0f35 100%);border:1px solid var(--line);border-radius:16px;padding:28px 28px;display:flex;gap:28px;align-items:center;overflow:hidden;min-height:280px;transition:background .3s,border-color .3s}
+.player-card::after{content:'';position:absolute;inset:0;opacity:.04;background:repeating-linear-gradient(45deg,#fff 0 1px,transparent 1px 18px);pointer-events:none}
+.player-card.role-P{background:linear-gradient(135deg,rgba(250,204,21,.22),#1a103e 55%,#1a0f35 100%);border-color:rgba(250,204,21,.28)}
+.player-card.role-D{background:linear-gradient(135deg,rgba(52,211,153,.18),#1a103e 55%,#1a0f35 100%);border-color:rgba(52,211,153,.25)}
+.player-card.role-C{background:linear-gradient(135deg,rgba(96,165,250,.18),#1a103e 55%,#1a0f35 100%);border-color:rgba(96,165,250,.25)}
+.player-card.role-A{background:linear-gradient(135deg,rgba(251,113,133,.18),#1a103e 55%,#1a0f35 100%);border-color:rgba(251,113,133,.25)}
+.pc-left{display:flex;gap:26px;align-items:center;flex:1.4;z-index:1}
+.pc-cardimg{width:210px;height:250px;border-radius:12px;object-fit:contain;object-position:center bottom;background:transparent;flex-shrink:0;filter:drop-shadow(0 10px 24px rgba(0,0,0,.5))}
+.pc-cardimg.hidden-img{visibility:hidden}
+.pc-info{flex:1.2;min-width:0}
+.pc-name{font-size:52px;font-weight:900;line-height:1;letter-spacing:.2px}
+.pc-team{color:var(--muted);font-size:20px;margin-top:8px}
+.pc-role{margin-top:12px;display:flex;align-items:center;gap:8px}
+.role-dot{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#000}
+.role-dot.P{background:var(--p)} .role-dot.D{background:var(--d)} .role-dot.C{background:var(--c)} .role-dot.A{background:var(--a)}
+.pc-role b{font-size:14px;letter-spacing:.6px}
+.pc-fvm{margin-top:16px}
+.pc-fvm .num{font-size:56px;font-weight:900;color:var(--accent);line-height:1}
+.pc-fvm .lbl{font-size:13px;letter-spacing:1px;color:var(--muted);font-weight:800}
+.pc-bid{flex:0 0 420px;display:flex;flex-direction:column;align-items:center;gap:14px;z-index:1;text-align:center;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px;box-shadow:0 6px 22px rgba(0,0,0,.3)}
+.bidline-grid{display:grid;grid-template-columns:38% 62%;gap:10px;width:100%}
+.bid-box{display:flex;align-items:center;justify-content:center;text-align:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px 8px;min-height:64px;box-sizing:border-box}
+.bid-box.lbl{min-height:44px;padding:10px 8px}
+.bid-box .v{font-size:40px;font-weight:900;color:var(--accent);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.bid-box:nth-child(2) .v{font-size:24px;color:var(--text);font-weight:800}
+.bid-box .k{font-size:13px;letter-spacing:.9px;color:var(--muted);text-transform:uppercase;font-weight:700}
+.timer{font-size:88px;font-weight:900;color:var(--gold);min-width:140px;line-height:1;text-shadow:0 2px 14px rgba(250,204,21,.28)}
+.timer.danger{color:var(--danger)}
+.timer.hidden-t{visibility:hidden}
+.empty-msg{width:100%;text-align:center;color:var(--muted);font-size:15px;padding:24px}
+.controls{padding:0 14px 10px;display:flex;gap:10px}
+.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:800;font-family:Montserrat,sans-serif;cursor:pointer;font-size:13px}
+.btn-accent{background:var(--accent);color:#062e26}
+.btn-ghost{background:var(--panel);color:var(--text);border:1px solid var(--line)}
+.btn-danger{background:var(--danger);color:#fff}
+.teams-wrap{padding:0 14px 14px}
+.teams-head{height:6px;background:var(--accent);border-radius:4px;margin-bottom:10px;opacity:.9}
+.teams-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.team-col{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-height:360px}
+.team-col.leading{border-color:rgba(0,230,184,.5);box-shadow:0 0 0 1px rgba(0,230,184,.2) inset}
+.tcol-head{padding:7px 7px 5px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line);min-height:34px}
+.tcol-head .ico{width:16px;height:16px;border-radius:50%;background:#0c0a1e;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:9px}
+.tcol-head .tname{font-size:10px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcol-body{flex:1;padding:6px;display:flex;flex-direction:column;gap:5px}
+.empty-team{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:11px;text-align:center;gap:8px;opacity:.7}
+.empty-team .paws{width:64px;height:64px;border-radius:50%;background:#0c0a1e;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:22px}
+.player-chip{background:#0c0a1e;border:1px solid var(--line);border-radius:7px;padding:5px 6px;display:flex;justify-content:space-between;align-items:center;gap:5px}
+.player-chip .left{display:flex;align-items:center;gap:5px;min-width:0}
+.player-chip .nm{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-chip .pr{color:var(--gold);font-weight:800;font-size:10px}
+.tcol-foot{padding:8px;border-top:1px solid var(--line);background:#0c0a1e}
+.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;text-align:center}
+.slots .s{font-size:9px;font-weight:800;background:rgba(255,255,255,.06);border-radius:6px;padding:4px 2px;border:1px solid transparent}
+.slots .s.low{background:rgba(255,255,255,.06);color:var(--muted);border-color:transparent}
+.slots .s.ok{background:rgba(0,230,184,.12);color:var(--accent);border-color:rgba(0,230,184,.18)}
+.slots .s.full{background:rgba(0,230,184,.2);color:var(--accent);border-color:rgba(0,230,184,.35)}
+.foot-budget{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--muted);font-weight:700}
+.foot-budget b{color:var(--text)}
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tab{flex:1;padding:10px 6px;text-align:center;font-weight:800;font-size:12px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.side-body{flex:1;overflow:auto;padding:10px}
+.search{width:100%;padding:10px 12px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);font-size:13px}
+.search::placeholder{color:var(--muted)}
+.filters{display:flex;gap:6px;margin:10px 0}
+.fpill{flex:1;padding:6px 0;border-radius:20px;text-align:center;font-weight:900;font-size:11px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.fpill.active.P{background:var(--p);color:#000;border-color:var(--p)}
+.fpill.active.D{background:var(--d);color:#000;border-color:var(--d)}
+.fpill.active.C{background:var(--c);color:#000;border-color:var(--c)}
+.fpill.active.A{background:var(--a);color:#000;border-color:var(--a)}
+.fpill.all.active{background:var(--text);color:#000}
+.row{display:flex;justify-content:space-between;align-items:center;padding:6px 7px;border-radius:8px;cursor:pointer}
+.row:hover{background:rgba(255,255,255,.05)}
+.row.assigned{opacity:.35}
+.row[draggable="true"]{cursor:grab}
+.row[draggable="true"]:active{cursor:grabbing}
+.row.dragging{opacity:0.5;transform:scale(0.98);background:rgba(0,230,184,.08) !important}
+.team-col.drop-target{border-color:var(--accent) !important;box-shadow:0 0 0 2px rgba(0,230,184,.3) inset, 0 4px 16px rgba(0,230,184,.15) !important;transform:scale(1.01)}
+.team-col.drop-invalid{border-color:rgba(244,63,94,.4) !important}
+.team-col.drag-over{transition:all .15s ease}
+.row .l{display:flex;align-items:center;gap:7px;min-width:0}
+.row .role{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:#000;flex-shrink:0}
+.row .role.P{background:var(--p)} .row .role.D{background:var(--d)} .row .role.C{background:var(--c)} .row .role.A{background:var(--a)}
+.row .nm{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .team{font-size:10px;color:var(--muted)}
+.row .fvm{color:var(--accent);font-weight:900;font-size:11px}
+.assign{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.assign .a-team{color:var(--accent);font-weight:800;font-size:11px}
+.assign .a-price{color:var(--gold);font-weight:800;font-size:12px}
+.assign .a-btn{background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--text);padding:5px 8px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer}
+.setup{width:100%;max-width:none;margin:0;padding:18px;overflow:auto;height:calc(100vh - 52px);display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:16px;align-content:start;align-items:start}
+.setup > .setup-title{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin:0 0 2px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:0;display:flex;flex-direction:column;height:auto;align-self:start}
+.card h3{font-size:14px;margin-bottom:8px}
+.field-map{font-size:12px;color:var(--muted);background:rgba(0,0,0,.25);border-radius:8px;padding:8px 10px;margin-bottom:10px}
+.setup input[type=text], .setup select, .setup input[type=number]{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:#0c0a1e;color:var(--text);margin:4px 0 8px}
+.setup input[type=file]{color:var(--muted);margin-bottom:8px}
+.status{margin-top:6px;font-size:12px;color:var(--muted)}
+.order-list{display:flex;flex-direction:column;gap:8px}
+.order-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0c0a1e;border:1px solid var(--line);border-radius:10px;cursor:grab}
+.hidden{display:none !important}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:50;padding:18px}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:420px;max-width:90vw;max-height:90vh;overflow:auto}
+.modal.wide{min-width:min(1100px,96vw)}
+.modal h3{margin-bottom:10px}
+.modal label{font-size:12px;color:var(--muted);display:block;margin:8px 0 4px}
+.modal select,.modal input{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:#0c0a1e;color:var(--text)}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.roster-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.teams-overview-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;align-items:start}
+.teams-overview-grid .team-editor{height:auto;min-height:auto;overflow:visible;display:flex;flex-direction:column;max-height:none}
+.teams-overview-grid .team-editor .player-chip{padding:3px 5px;gap:4px;border-radius:6px}
+.teams-overview-grid .team-editor .player-chip .nm{font-size:10px}
+.teams-overview-grid .team-editor .player-chip .pr{font-size:9px}
+.teams-overview-grid .team-editor h4{margin-bottom:4px}
+@media(max-width:1400px){.teams-overview-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:900px){.roster-grid{grid-template-columns:1fr};.teams-overview-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.teams-overview-grid{grid-template-columns:1fr}}
+.team-editor{background:#0c0a1e;border:1px solid var(--line);border-radius:10px;padding:10px}
+.team-editor h4{font-size:12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.team-editor table{width:100%;border-collapse:collapse;font-size:12px}
+.team-editor th{color:var(--muted);font-size:10px;text-align:left;padding:4px}
+.team-editor td{padding:4px;border-top:1px solid var(--line)}
+.team-editor input[type=number], .team-editor input[type=text]{padding:6px 8px;font-size:12px}
+.mini-btn{background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--text);padding:4px 8px;border-radius:6px;font-size:11px;cursor:pointer}
+.mini-btn.danger{color:var(--danger);border-color:rgba(244,63,94,.3)}
+.turn-banner{width:100%;padding:20px;display:flex;justify-content:space-between;align-items:center;gap:20px;background:transparent;border:none;box-shadow:none;border-radius:0}
+.turn-banner .tn-left{flex:1.3;min-width:0;text-align:left}
+.turn-banner .tn-right{flex:0 0 auto;min-width:220px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;text-align:right}
+.turn-banner .tn-label{font-size:14px;letter-spacing:2px;color:var(--accent);font-weight:800;text-transform:uppercase}
+.turn-banner .tn-team{font-size:clamp(36px, 5vw, 64px);font-weight:900;margin:4px 0 0;font-family:Montserrat,sans-serif;line-height:0.95;white-space:normal;overflow:visible;overflow-wrap:anywhere;word-break:break-word;hyphens:auto}
+.turn-banner .tn-role{display:flex;align-items:center;justify-content:flex-end;gap:10px;font-size:24px;font-weight:800;color:var(--text)}
+.turn-banner .tn-stats{display:flex;justify-content:flex-end;gap:22px;font-size:16px;color:var(--muted);font-weight:700;flex-wrap:wrap}
+.turn-banner .tn-stats div{text-align:center;min-width:70px}
+.turn-banner .tn-stats b{color:var(--text);font-size:26px;display:block;font-family:Montserrat,sans-serif;line-height:1.2}
+.finished-banner{width:100%;text-align:center;padding:30px;font-size:32px;font-weight:900;color:var(--accent)}
+.landing{position:fixed;inset:0;background:radial-gradient(1200px 600px at 50% 0%, #1e1040 0%, var(--bg) 60%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:90;text-align:center;padding:40px 20px}
+.landing.hidden{display:none}
+.landing-titoletto{color:var(--accent);font-family:Montserrat,sans-serif;font-weight:800;font-size:14px;letter-spacing:4px;text-transform:uppercase;margin-bottom:16px}
+.landing-title{color:var(--text);font-family:Montserrat,sans-serif;font-weight:900;font-size:72px;line-height:0.9;letter-spacing:1px;margin-bottom:32px;text-shadow:0 4px 24px rgba(0,0,0,.4)}
+.landing-btn{font-size:18px;padding:16px 36px;border-radius:14px;box-shadow:0 8px 24px rgba(0,230,184,.2)}
+.admin-pre-start{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:36px 20px;gap:18px;z-index:1;min-height:240px}
+.admin-pre-start .pre-titoletto{color:var(--accent);font-family:Montserrat,sans-serif;font-weight:800;font-size:17px;letter-spacing:4px;text-transform:uppercase}
+.admin-pre-start .pre-title{color:var(--text);font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(52px,6vw,74px);line-height:0.9;letter-spacing:1px;text-shadow:0 4px 24px rgba(0,0,0,.4)}
+.admin-pre-start .pre-btn{font-size:18px;padding:16px 36px;border-radius:12px;box-shadow:0 8px 24px rgba(0,230,184,.18)}
+@media(max-width:900px){
+  body{overflow:auto; -webkit-overflow-scrolling:touch}
+  .site-header{height:auto; min-height:52px; flex-wrap:wrap; padding:8px 10px; gap:8px}
+  .site-header .hdr-left, .site-header .hdr-center, .site-header .hdr-right{flex:1 1 auto}
+  .hdr-right{flex-wrap:wrap; justify-content:flex-end}
+  .exp-link{padding:6px 10px; font-size:11px; white-space:nowrap}
+  #mobileMenuBtn{display:inline-flex !important}
+  .shell{grid-template-columns:1fr; height:auto; min-height:calc(100vh - 56px)}
+  .main{overflow:visible}
+  .sidebar{border-left:none; border-top:1px solid var(--line); height:420px; min-height:320px; flex-shrink:0}
+  .sidebar.mobile-hidden{display:none !important}
+  .player-card{flex-direction:column; padding:16px; min-height:auto; gap:16px; align-items:stretch}
+  #filledState{flex-direction:column !important; gap:16px !important; align-items:stretch !important}
+  .pc-cardimg{width:170px; height:200px; margin:0 auto}
+  .pc-info{text-align:center}
+  .pc-name{font-size:34px; text-align:center}
+  .pc-team{font-size:16px; text-align:center}
+  .pc-role{justify-content:center}
+  .pc-fvm{margin-top:10px; text-align:center}
+  .pc-fvm .num{font-size:42px}
+  .pc-bid{flex:0 0 auto; width:100%; max-width:none; padding:16px; flex-basis:auto}
+  .bidline-grid{grid-template-columns:1fr 1fr; gap:8px}
+  .bid-box{min-height:60px; padding:14px 8px}
+  .bid-box.lbl{min-height:44px}
+  .bid-box .v{font-size:32px}
+  .bid-box:nth-child(2) .v{font-size:19px}
+  .timer{font-size:64px; min-width:110px; text-align:center}
+  .controls{flex-wrap:wrap; padding:10px; gap:8px}
+  .controls .btn{flex:1 1 auto; min-width:120px; padding:10px 12px; font-size:12px}
+  #auctionInfo{width:100%; text-align:center; margin-left:0 !important; margin-top:4px}
+  .teams-wrap{padding:0 10px 10px}
+  .teams-grid{grid-template-columns:repeat(2,1fr); gap:8px}
+  .team-col{min-height:280px}
+  .turn-banner{flex-direction:column; gap:14px; padding:18px; text-align:center}
+  .turn-banner .tn-left, .turn-banner .tn-right{align-items:center; text-align:center; flex:1 1 auto; min-width:0; justify-content:center}
+  .turn-banner .tn-team{font-size:34px; text-align:center}
+  .turn-banner .tn-stats{justify-content:center}
+  .admin-pre-start{padding:28px 16px; min-height:220px}
+  .admin-pre-start .pre-title{font-size:42px}
+  .setup{grid-template-columns:1fr; padding:12px; height:auto; gap:12px}
+  .setup > .setup-title{flex-wrap:wrap}
+  .modal{ min-width:0; max-width:96vw; margin:10px; padding:14px}
+  .modal.wide{min-width:0; max-width:96vw}
+  .roster-grid{grid-template-columns:1fr}
+  .teams-overview-grid{grid-template-columns:repeat(2,1fr) !important}
+}
+@media(max-width:600px){
+  .shell{grid-template-columns:1fr}
+  .player-card{padding:12px; border-radius:12px}
+  .pc-cardimg{width:150px; height:180px}
+  .pc-name{font-size:28px}
+  .pc-fvm .num{font-size:36px}
+  .teams-grid{grid-template-columns:1fr}
+  .teams-overview-grid{grid-template-columns:1fr !important}
+  .site-header{padding:8px 8px; gap:6px}
+  .logo-white svg{height:22px}
+  .exp-link{padding:6px 8px; font-size:11px}
+  .search{font-size:16px}
+  .admin-pre-start .pre-title{font-size:38px}
+  .admin-pre-start .pre-titoletto{font-size:14px; letter-spacing:3px}
+  .turn-banner .tn-team{font-size:28px}
+  .timer{font-size:56px}
+  .bid-box .v{font-size:28px}
+  .bid-box:nth-child(2) .v{font-size:16px}
+  .controls .btn{font-size:12px; padding:9px 10px}
+}
+@media(max-width:600px){.landing-title{font-size:48px}}
+/* === FantaLive inspired — selects, inputs & transitions === */
+:root{--fanta-input-bg:rgba(255,255,255,.08);--fanta-input-bg-hover:rgba(255,255,255,.12);--fanta-input-bg-focus:rgba(0,0,0,.35);--fanta-radius:14px;--fanta-radius-pill:20px;--fanta-transition:all .15s ease-out;--fanta-bounce:.22s cubic-bezier(.47,1.64,.41,.8)}
+/* Inputs & selects — glassy, rounded, blur */
+.setup input[type=text], .setup input[type=number], .setup select,
+.search, select, input[type=text], input[type=number], input[type=search],
+#adminTeamFilter, #clFilters, .modal select, .modal input,
+.cl-search, .cl-team-select, #rosterSearch, #customAmount, #pmPrice, #pmTeamSelect {
+  background:var(--fanta-input-bg) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  border-radius:var(--fanta-radius) !important;
+  backdrop-filter:blur(12px) saturate(1.2);
+  -webkit-backdrop-filter:blur(12px) saturate(1.2);
+  color:var(--text) !important;
+  font-family:Inter, sans-serif;
+  font-weight:500;
+  transition:var(--fanta-transition);
+  box-shadow:0 2px 12px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.06);
+  outline:none;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  -moz-appearance:none !important;
+  color-scheme:dark;
+}
+.search, .cl-search, #rosterSearch { border-radius:var(--fanta-radius-pill) !important; padding:10px 16px !important; }
+select, #adminTeamFilter, .cl-team-select, #pmTeamSelect {
+  cursor:pointer;
+  padding-right:36px !important;
+  background-color:var(--fanta-input-bg) !important;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%) !important;
+  background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 12px) calc(50% - 2px) !important;
+  background-size:6px 6px, 6px 6px !important;
+  background-repeat:no-repeat !important;
+  -webkit-appearance:none !important;
+  -moz-appearance:none !important;
+  appearance:none !important;
+}
+select::-ms-expand { display:none; }
+select::-webkit-inner-spin-button, select::-webkit-outer-spin-button { -webkit-appearance:none; }
+select:hover, input:hover { background:var(--fanta-input-bg-hover) !important; border-color:rgba(255,255,255,.18) !important; transform:translateY(-1px); box-shadow:0 4px 16px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.08); }
+select:focus, input:focus { background:var(--fanta-input-bg-focus) !important; border-color:rgba(0,230,184,.45) !important; box-shadow:0 0 0 3px rgba(0,230,184,.14), 0 6px 20px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08) !important; transform:translateY(-1px); }
+select:focus-visible { outline:none; }
+input::placeholder, select:invalid { color:var(--muted); opacity:.7; }
+input[type=file] { background:transparent !important; border:none !important; box-shadow:none !important; backdrop-filter:none; padding:6px 0 !important; }
+input[type=file]::file-selector-button {
+  background:var(--fanta-input-bg); border:1px solid rgba(255,255,255,.14); border-radius:var(--fanta-radius-pill); color:var(--text); font-family:Montserrat,sans-serif; font-weight:700; font-size:12px; padding:8px 14px; margin-right:10px; cursor:pointer; transition:var(--fanta-transition); backdrop-filter:blur(8px);
+}
+input[type=file]::file-selector-button:hover { background:var(--fanta-input-bg-hover); border-color:var(--accent); color:var(--accent); transform:translateY(-1px); }
+select option { background:#1a103e; color:var(--text); padding:10px; }
+/* Buttons micro-interaction */
+.btn, .exp-link, .fpill, .cl-fpill, .order-item, .player-chip, .team-col, .card { transition:var(--fanta-transition); }
+.btn:active, .exp-link:active { transform:scale(.97); }
+.btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,.2); }
+.fpill:hover, .cl-fpill:hover { transform:translateY(-1px); border-color:rgba(255,255,255,.2); }
+/* Popup / modal transitions — inspired by FantaLive bounce */
+.modal-overlay { opacity:0; pointer-events:none; transition:opacity .18s ease-out, backdrop-filter .18s ease-out; backdrop-filter:blur(0px); }
+.modal-overlay:not(.hidden) { opacity:1; pointer-events:auto; backdrop-filter:blur(8px); background:rgba(0,0,0,.55) !important; }
+.modal-overlay:not(.hidden) .modal { animation:modalPop var(--fanta-bounce) forwards; }
+#teamsOverviewModal { opacity:0; pointer-events:none; transition:opacity .2s ease-out; }
+#teamsOverviewModal:not(.hidden) { opacity:1; pointer-events:auto; }
+#teamsOverviewModal:not(.hidden) > div:last-child { animation:slideUp .24s cubic-bezier(.16,1,.3,1) forwards; }
+@keyframes modalPop { 0%{opacity:0; transform:scale(.94) translateY(10px)} 100%{opacity:1; transform:scale(1) translateY(0)} }
+@keyframes slideUp { 0%{opacity:0; transform:translateY(16px)} 100%{opacity:1; transform:translateY(0)} }
+.modal { will-change:transform, opacity; box-shadow:0 20px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.08); border-radius:20px !important; }
+#playerCard, .player-chip, .team-col, .card { will-change:transform; }
+.player-chip:hover { transform:translateY(-1px); border-color:rgba(0,230,184,.25) !important; box-shadow:0 4px 12px rgba(0,0,0,.2); }
+.team-col:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.25); }
+.row { transition:var(--fanta-transition); border-radius:10px; }
+.row:hover { background:rgba(255,255,255,.06) !important; transform:translateX(2px); }
+/* === Responsive fluid — Retina MacBook / 1080p / 4K — proporzioni costanti === */
+html{font-size:clamp(13px, 0.78vw + 0.35rem, 15.5px); scrollbar-gutter:stable}
+body{-webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility}
+.shell{height:calc(100dvh - 52px); height:calc(100vh - 52px); grid-template-columns:minmax(0,1fr) clamp(260px, 21vw, 320px); gap:0}
+.main{container-type:inline-size; container-name:main}
+.player-zone{padding:clamp(10px, 1.2vw, 16px) clamp(10px, 1.2vw, 14px) clamp(8px, 0.8vw, 12px)}
+.player-card{padding:clamp(16px, 1.8vw, 28px); gap:clamp(14px, 1.9vw, 28px); min-height:clamp(240px, 20vw, 300px); border-radius:clamp(12px, 1.2vw, 16px)}
+.pc-cardimg{width:clamp(150px, 13vw, 210px); height:clamp(180px, 15.5vw, 250px); border-radius:clamp(10px, 0.9vw, 12px)}
+.pc-info{flex:1.2; min-width:0}
+.pc-name{font-size:clamp(28px, 3.2vw, 52px) !important; line-height:0.95}
+.pc-team{font-size:clamp(13px, 1.1vw, 20px) !important; margin-top:clamp(4px, 0.5vw, 8px)}
+.pc-role{margin-top:clamp(6px, 0.7vw, 12px)}
+.role-dot{width:clamp(18px, 1.6vw, 24px); height:clamp(18px, 1.6vw, 24px); font-size:clamp(10px, 0.9vw, 12px)}
+.pc-role b{font-size:clamp(11px, 0.9vw, 14px)}
+.pc-fvm{margin-top:clamp(8px, 1vw, 16px)}
+.pc-fvm .num{font-size:clamp(32px, 3.8vw, 56px) !important}
+.pc-fvm .lbl{font-size:clamp(10px, 0.85vw, 13px)}
+.pc-bid{flex:0 1 clamp(320px, 27vw, 440px) !important; width:clamp(320px, 27vw, 440px); max-width:100%; padding:clamp(14px, 1.3vw, 18px); gap:clamp(10px, 1vw, 14px); border-radius:clamp(14px, 1.2vw, 16px)}
+.bidline-grid{gap:clamp(8px, 0.9vw, 10px)}
+.bid-box{padding:clamp(10px, 1vw, 14px) clamp(8px, 0.8vw, 10px); min-height:clamp(52px, 4.5vw, 64px); border-radius:clamp(10px, 1vw, 14px)}
+.bid-box.lbl{min-height:clamp(36px, 3.2vw, 44px)}
+.bid-box .v{font-size:clamp(24px, 2.6vw, 40px) !important}
+.bid-box:nth-child(2) .v{font-size:clamp(16px, 1.55vw, 24px) !important}
+.bid-box .k{font-size:clamp(10px, 0.85vw, 13px)}
+.timer{font-size:clamp(48px, 5.5vw, 88px) !important; min-width:clamp(90px, 9vw, 140px)}
+.turn-banner{padding:clamp(14px, 1.4vw, 20px); gap:clamp(12px, 1.4vw, 20px)}
+.turn-banner .tn-label{font-size:clamp(11px, 0.95vw, 14px)}
+.turn-banner .tn-team{font-size:clamp(26px, 3vw, 52px) !important}
+.turn-banner .tn-role{font-size:clamp(16px, 1.6vw, 24px); gap:clamp(6px, 0.7vw, 10px)}
+.turn-banner .tn-stats{font-size:clamp(12px, 1vw, 16px); gap:clamp(12px, 1.4vw, 22px)}
+.turn-banner .tn-stats b{font-size:clamp(18px, 1.9vw, 26px)}
+.admin-pre-start{padding:clamp(20px, 2vw, 36px) clamp(16px, 1.6vw, 20px); gap:clamp(12px, 1.2vw, 18px); min-height:clamp(180px, 18vw, 240px)}
+.admin-pre-start .pre-titoletto{font-size:clamp(12px, 1vw, 17px)}
+.admin-pre-start .pre-title{font-size:clamp(32px, 4.2vw, 64px) !important}
+.teams-wrap{padding:0 clamp(8px, 0.9vw, 14px) clamp(8px, 0.9vw, 14px)}
+.teams-grid{gap:clamp(4px, 0.6vw, 8px)}
+.team-col{min-height:clamp(280px, 24vw, 360px); border-radius:clamp(10px, 1vw, 12px)}
+.tcol-head{padding:clamp(6px, 0.6vw, 7px) clamp(6px, 0.6vw, 7px) clamp(4px, 0.5vw, 5px)}
+.tcol-body{padding:clamp(4px, 0.5vw, 6px); gap:clamp(3px, 0.4vw, 5px)}
+.tcol-foot{padding:clamp(6px, 0.6vw, 8px)}
+.slots .s{font-size:clamp(8px, 0.75vw, 9px); padding:clamp(3px, 0.4vw, 4px) 2px}
+.foot-budget{font-size:clamp(9px, 0.8vw, 10px)}
+.sidebar .search, .search{font-size:clamp(12px, 0.95vw, 13px); padding:clamp(8px, 0.8vw, 10px) clamp(10px, 1vw, 12px)}
+@container main (max-width: 1100px){
+  .player-card{flex-direction:column; align-items:stretch}
+  #filledState{flex-direction:column !important}
+  .pc-bid{width:100%; flex-basis:auto}
+}
+@media (min-resolution: 2dppx){
+  body{image-rendering:-webkit-optimize-contrast}
+  .pc-cardimg{image-rendering:auto}
+}
+@media (min-width: 1920px){
+  .shell{grid-template-columns:minmax(0,1fr) 360px}
+  .teams-grid{grid-template-columns:repeat(8, minmax(0,1fr))}
+}
+@media (max-width: 1600px){
+  .teams-grid{grid-template-columns:repeat(4, minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<div id="landingScreen" class="landing hidden">
+  <div class="landing-titoletto">FANTACALCIO 2026</div>
+  <div class="landing-title">CRENCREW<br>LEAGUE</div>
+  <button class="btn btn-accent landing-btn" onclick="startAsta()">Inizia asta</button>
+</div>
+<div id="setupScreen" class="setup hidden">
+  <div class="setup-title">
+    <svg viewBox="0 0 260 32" height="26"><text x="0" y="12" fill="#fff" font-family="Montserrat,Arial" font-weight="800" font-size="11" letter-spacing="2">CRENCREW</text><text x="0" y="28" fill="#fff" font-family="Montserrat,Arial" font-weight="900" font-size="15" letter-spacing="1">LEAGUE 2026</text><circle cx="246" cy="16" r="12" fill="none" stroke="#fff" stroke-width="1.6"/><path d="M246 6 v6 M246 20 v6 M236 16 h6 M252 16 h6" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/><circle cx="246" cy="16" r="3.5" fill="none" stroke="#fff" stroke-width="1.2"/></svg>
+    <h2 style="font-size:16px">Setup Asta</h2>
+    <button class="btn btn-ghost" style="margin-left:auto;padding:10px 16px" onclick="goToAsta()">Vai alla dashboard asta →</button>
+  </div>
+  <div class="card">
+    <h3>Setting Asta</h3>
+    <div style="display:flex;flex-direction:column;gap:22px">
+      <div>
+        <div style="font-size:13px;font-weight:800;margin-bottom:6px">Carica CSV giocatori</div>
+        <div class="field-map">Export Fantacalcio.it senza intestazione — col 1=ID, col 2=Nome, col 4=Ruolo, col 6=Q, col 10=Squadra, col 16=URL card.</div>
+        <div style="display:flex;align-items:center;gap:10px;margin:10px 0">
+          <label for="csvFile" class="btn btn-ghost" style="border-radius:20px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;border:1px solid var(--line);background:rgba(255,255,255,.06)">Scegli file</label>
+          <span id="csvFileName" style="color:var(--muted);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Nessun file selezionato</span>
+          <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="onCsvFileChange()">
+        </div>
+        <button class="btn btn-accent" style="width:100%;padding:12px;font-size:14px;font-weight:800" onclick="uploadCsv()">Carica CSV</button>
+        <div id="csvStatus" class="status"></div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:800;margin-bottom:8px">Backup asta</div>
+        <button class="btn btn-accent" style="width:100%;padding:12px;font-size:14px;font-weight:800" onclick="createBackup()">Crea backup ora</button>
+        <div id="backupStatus" class="status"></div>
+        <div id="backupList" style="margin-top:10px;font-size:11px;color:var(--muted);max-height:120px;overflow:auto"></div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:800;margin-bottom:8px">Riavvia asta</div>
+        <button class="btn btn-danger" style="width:100%;padding:12px;font-size:14px;font-weight:800" onclick="resetAsta()">Riavvia asta</button>
+        <div id="resetStatus" class="status"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Impostazioni squadre</h3>
+    <div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px">Trascina per riordinare • modifica il nome nella stessa riga</div>
+    <div id="teamCombinedList" class="order-list"></div>
+    <!-- compatibilità: mantenuti nascosti per JS legacy -->
+    <div id="teamInputs" style="display:none"></div>
+    <div id="teamOrderList" style="display:none"></div>
+    <button class="btn btn-accent" style="margin-top:12px;width:100%" onclick="saveSquadre()">Salva squadre</button>
+    <div id="teamStatus" class="status"></div>
+    <div id="teamOrderStatus" class="status"></div>
+  </div>
+  <div class="card">
+    <h3>Impostazioni ruoli</h3>
+    <div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px">Trascina per riordinare • imposta min/max nella stessa riga</div>
+    <div id="roleCombinedList" class="order-list"></div>
+    <!-- compatibilità -->
+    <div id="roleOrderList" style="display:none"></div>
+    <div id="roleSlotsInputs" style="display:none"></div>
+    <button class="btn btn-accent" style="margin-top:12px;width:100%" onclick="saveRuoli()">Salva ruoli</button>
+    <div id="roleStatus" class="status"></div>
+    <div id="slotStatus" class="status"></div>
+  </div>
+  <div class="card">
+    <h3>Timer asta</h3>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;gap:8px;align-items:center"><label style="font-size:12px;color:var(--muted);flex:1">Asta (dopo offerta)<br><input type="number" id="timerInput" min="3" max="60" value="10" style="max-width:120px"></label><label style="font-size:12px;color:var(--muted);flex:1">Prima offerta<br><input type="number" id="pendingTimerInput" min="5" max="120" value="30" style="max-width:120px"></label></div>
+      <button class="btn btn-accent" onclick="saveTimer()">Salva timer</button>
+    </div>
+    <div id="timerStatus" class="status"></div>
+  </div>
+</div>
+
+<div id="astaScreen" class="">
+  <header class="site-header">
+    <div class="hdr-left">
+      <div class="logo-white"><svg viewBox="0 0 260 32" height="22"><text x="0" y="11" fill="#fff" font-family="Montserrat,Arial" font-weight="800" font-size="10" letter-spacing="2">CRENCREW</text><text x="0" y="26" fill="#fff" font-family="Montserrat,Arial" font-weight="900" font-size="13" letter-spacing="1">LEAGUE 2026</text><circle cx="246" cy="16" r="11" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M246 7 v5 M246 20 v5 M236 16 h5 M252 16 h5" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><circle cx="246" cy="16" r="3.2" fill="none" stroke="#fff" stroke-width="1.2"/></svg></div>
+      <button class="menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" style="display:none">☰ Lista</button>
+    </div>
+    <div class="hdr-center">
+      <span class="role-badge" id="roleBadge" style="display:none">—</span>
+    </div>
+    <div class="hdr-right">
+      <a class="exp-link" href="/export">⬇ Esporta</a>
+      <button class="exp-link" onclick="openTeamsOverview()">▣ Squadre</button>
+      <button class="exp-link hidden" onclick="openRosterEditor()" id="editRosesBtn">◈ Modifica rose</button>
+      <button class="exp-link" onclick="showSetup()">⚙ Setting</button>
+      <button class="exp-link" id="fsBtn" onclick="toggleFullscreen()" title="Schermo intero">⛶ Fullscreen</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <div class="main">
+      <div class="player-zone">
+        <div class="player-card" id="playerCard">
+          <div id="adminPreStart" class="admin-pre-start hidden">
+            <div class="pre-titoletto">FANTACALCIO 2026</div>
+            <div class="pre-title">CRENCREW<br>LEAGUE</div>
+            <button class="btn btn-accent pre-btn" onclick="startAsta()" id="adminStartBtn">Inizia asta</button>
+            <div id="adminPreStartMsg" class="status hidden" style="margin-top:8px;max-width:360px"></div>
+          </div>
+          <div id="emptyState" class="empty-msg">In attesa dell'inizio</div>
+          <div id="filledState" class="hidden" style="display:flex;gap:22px;align-items:center;width:100%">
+            <img id="playerPhoto" class="pc-cardimg" src="" alt="">
+            <div class="pc-info">
+              <div class="pc-name" id="playerName">—</div>
+              <div class="pc-team" id="playerSquadra"></div>
+              <div class="pc-role"><span class="role-dot" id="playerRoleDot">A</span><b id="playerRoleTxt">—</b></div>
+              <div class="pc-fvm"><div class="num" id="playerFvm">—</div><div class="lbl">Q</div></div>
+            </div>
+            <div class="pc-bid">
+              <div class="bidline-grid">
+                <div class="bid-box"><div class="v" id="currentBid">0</div></div>
+                <div class="bid-box"><div class="v" id="currentBidder">—</div></div>
+                <div class="bid-box lbl"><div class="k">OFFERTA</div></div>
+                <div class="bid-box lbl"><div class="k">IN TESTA</div></div>
+              </div>
+              <div class="timer" id="timer">--</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn btn-accent" id="actionBtn">✓ Assegna ora</button>
+        <button class="btn btn-danger" id="skipAuctionBtn" onclick="skipPlayer()" style="display:none">⏭ Invenduto</button>
+        <button class="btn btn-ghost" id="nextRoleBtn" onclick="nextRole()" style="display:none">Passa a ...</button>
+        <span style="margin-left:auto;color:var(--muted);font-size:12px;align-self:center" id="auctionInfo"></span>
+      </div>
+      <div class="teams-wrap">
+        <div class="teams-head"></div>
+        <div class="teams-grid" id="teamsGrid"></div>
+      </div>
+    </div>
+    <aside class="sidebar" id="sidebar">
+      <div class="tabs"><div class="tab active" id="tabPlayers" onclick="switchTab('players')">Lista Calciatori</div><div class="tab" id="tabAssign" onclick="switchTab('assign')">Assegnazioni</div></div>
+      <div class="side-body">
+        <div id="playersPanel">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+            <input class="search" id="searchInput" placeholder="Cerca..." oninput="renderPlayers()" style="flex:1">
+            <select id="adminTeamFilter" onchange="setAdminTeamFilter(this.value||null)" style="flex:0 0 120px;padding:10px 8px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);font-size:12px;height:38px"><option value="">Squadra</option></select>
+          </div>
+          <div class="filters" id="roleFilters"></div>
+          <div id="playersList"></div>
+        </div>
+        <div id="assignPanel" class="hidden"><div id="assignList"></div></div>
+      </div>
+      <div style="padding:8px 10px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:11px"><span>Lista aggiornata</span><span><svg viewBox="0 0 160 20" height="14"><text x="0" y="14" fill="#fff" font-family="Montserrat" font-weight="900" font-size="9">CRENCREW LEAGUE 2026</text></svg></span></div>
+    </aside>
+  </div>
+</div>
+
+<!-- Roster editor -->
+<div id="rosterModal" class="modal-overlay hidden" onclick="if(event.target===this)closeRoster()">
+  <div class="modal wide">
+    <h3>Modifica rose — tabella per squadra</h3>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Modifica giocatori e prezzi. Crediti = 500 - somma prezzi. Aggiungi un giocatore scegliendolo dalla lista.</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+      <input id="rosterSearch" class="search" placeholder="Cerca giocatore o squadra..." oninput="renderRosterGrid()" style="flex:1;min-width:200px">
+      <div id="rosterRoleFilters" style="display:flex;gap:6px"></div>
+    </div>
+    <div id="rosterGrid" class="roster-grid"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeRoster()">Chiudi</button><button class="btn btn-accent" onclick="saveRosters()">Salva tutto</button></div>
+    <div id="rosterStatus" class="status"></div>
+  </div>
+</div>
+<!-- Teams overview full page -->
+<div id="teamsOverviewModal" class="hidden" style="position:fixed;inset:0;background:var(--bg);z-index:45;overflow:auto;display:flex;flex-direction:column">
+  <div style="height:52px;min-height:52px;background:linear-gradient(90deg,#0f0a2a,#1a1240);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 14px;gap:10px;flex-shrink:0">
+    <h3 style="margin:0;font-size:18px">Squadre</h3>
+    <button class="btn btn-ghost" onclick="closeTeamsOverview()">✕ Chiudi</button>
+  </div>
+  <div style="flex:0 0 auto;overflow:visible;padding:16px;background:radial-gradient(1200px 600px at 20% 0%, #1e1040 0%, var(--bg) 60%)">
+    <div id="teamsOverviewGrid" class="teams-overview-grid"></div>
+  </div>
+</div>
+<!-- Player detail modal -->
+<div id="playerModal" class="modal-overlay hidden" onclick="if(event.target===this)closePlayerModal()">
+  <div class="modal" style="min-width:380px;max-width:480px">
+    <h3 id="pmName">—</h3>
+    <div style="display:flex;gap:16px;align-items:flex-start;margin:12px 0">
+      <img id="pmPhoto" src="" alt="" style="width:110px;height:140px;object-fit:contain;border-radius:10px;background:#0c0a1e;display:none;flex-shrink:0">
+      <div style="flex:1;min-width:0">
+        <div id="pmInfo" style="font-size:13px;color:var(--muted);line-height:1.7"></div>
+        <div id="pmAssigned" style="margin-top:8px;font-size:12px;font-weight:800;color:var(--accent)"></div>
+      </div>
+    </div>
+    <label style="font-size:12px;color:var(--muted)">Assegna a squadra</label>
+    <select id="pmTeamSelect"></select>
+    <label style="font-size:12px;color:var(--muted)">Prezzo (crediti)</label>
+    <input type="number" id="pmPrice" min="1" placeholder="1">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closePlayerModal()">Chiudi</button>
+      <button class="btn btn-danger" id="pmRemoveBtn" onclick="unassignPlayer()">Svincola</button>
+      <button class="btn btn-accent" onclick="assignPlayerFromModal()">Assegna</button>
+    </div>
+    <div id="pmStatus" class="status"></div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket=io(); let latest=null, tab='players', roleFilter=null, adminTeamFilter=null;
+let assignedDisplay=null, assignedTimeout=null;
+let audioCtx=null;
+let lastBeepSecond=null;
+function getAudio(){ try{ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); return audioCtx; }catch(e){ return null; } }
+function playBeep(freq,dur,vol,type){ try{ const ctx=getAudio(); if(!ctx) return; const o=ctx.createOscillator(); const g=ctx.createGain(); o.type=type||'sine'; o.frequency.value=freq; o.connect(g); g.connect(ctx.destination); g.gain.setValueAtTime(vol||0.28, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime+dur); o.start(); o.stop(ctx.currentTime+dur); }catch(e){} }
+function playShort(){ playBeep(520,0.10,0.32,'square'); }
+function playLong(){ playBeep(380,0.60,0.36,'square'); }
+const ROLES=['P','D','C','A'], ROLE_NAMES={P:'Portieri',D:'Difensori',C:'Centrocampisti',A:'Attaccanti'};
+const DEFAULT_TEAM_NAMES = ['Dinamo Bidet','Giory Team','Joga Bonito','ProSecco','Giannifurgonemujito7','Costozza DC','Collione FC','Dinamo Skarsetti'];
+const teamInputs=document.getElementById('teamInputs');
+for(let i=1;i<=8;i++){ const inp=document.createElement('input'); inp.type='text'; inp.id='team'+i; inp.placeholder='Nome squadra '+i; inp.value=DEFAULT_TEAM_NAMES[i-1]||('Squadra '+i); inp.addEventListener('input', function(){ syncTeamOrderNames(); }); teamInputs.appendChild(inp); }
+let teamOrder=[...DEFAULT_TEAM_NAMES];
+function renderTeamOrder(){
+  const el=document.getElementById('teamOrderList'); if(!el) return; el.innerHTML='';
+  teamOrder.forEach((name,i)=>{
+    const d=document.createElement('div'); d.className='order-item'; d.draggable=true;
+    d.innerHTML=`<span style="opacity:.5">⠿</span><span style="font-weight:800;flex:1">${name}</span><span style="color:var(--muted);font-size:12px">#${i+1}</span>`;
+    d.ondragstart=e=>e.dataTransfer.setData('text/plain',i);
+    d.ondragover=e=>e.preventDefault();
+    d.ondrop=e=>{ e.preventDefault(); const from=Number(e.dataTransfer.getData('text/plain')), to=i; const it=teamOrder.splice(from,1)[0]; teamOrder.splice(to,0,it); renderTeamOrder(); };
+    el.appendChild(d);
+  });
+}
+function syncTeamOrderNames(){
+  const names=[]; for(let i=1;i<=8;i++) names.push(document.getElementById('team'+i).value.trim()||(DEFAULT_TEAM_NAMES[i-1]||'Squadra '+i));
+  teamOrder = teamOrder.map((old,i)=> names[i] !== undefined ? names[i] : old);
+  if(new Set(teamOrder).size !== teamOrder.length) teamOrder=[...names];
+  renderTeamOrder(); renderTeamCombined();
+}
+async function saveTeamOrder(){
+  const r=await fetch('/set-team-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({order:teamOrder})});
+  const j=await r.json(); document.getElementById('teamOrderStatus').textContent=j.ok?'Ordine squadre salvato':'Errore: '+j.error;
+}
+renderTeamOrder();
+function renderTeamCombined(){
+  const el=document.getElementById('teamCombinedList'); if(!el) return; el.innerHTML='';
+  teamOrder.forEach((name,i)=>{
+    const d=document.createElement('div'); d.className='order-item'; d.draggable=true; d.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 10px;background:#0c0a1e;border:1px solid var(--line);border-radius:10px;cursor:grab';
+    d.innerHTML=`<span style="opacity:.5;cursor:grab">⠿</span><input type="text" value="${name.replace(/"/g,'&quot;')}" data-idx="${i}" style="flex:1;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:8px;padding:6px 8px;color:var(--text);font-weight:700" placeholder="Squadra ${i+1}"><span style="color:var(--muted);font-size:11px;font-weight:700">#${i+1}</span>`;
+    const inp=d.querySelector('input');
+    inp.addEventListener('input', function(e){
+      const idx=Number(e.target.dataset.idx);
+      teamOrder[idx]=e.target.value.trim()||('Squadra '+(idx+1));
+      // sync legacy inputs
+      const legacy=document.getElementById('team'+(idx+1));
+      // legacy inputs are in original order 1..8, not call order — update by value match
+      // Find which legacy index corresponds to old value? simpler: rebuild legacy from teamOrder is not 1:1
+      // Instead keep legacy inputs synced via syncTeamOrderNames reverse: update all legacy inputs to reflect current names in original positions is complex
+      // For now just update teamOrder array, legacy will be synced on save via names collection
+      renderTeamOrder();
+    });
+    inp.addEventListener('mousedown', function(e){ e.stopPropagation(); });
+    d.addEventListener('dragstart', function(e){ e.dataTransfer.setData('text/plain', i); e.dataTransfer.effectAllowed='move'; setTimeout(function(){ d.classList.add('dragging'); },0); });
+    d.addEventListener('dragend', function(e){ d.classList.remove('dragging'); });
+    d.addEventListener('dragover', function(e){ e.preventDefault(); });
+    d.addEventListener('drop', function(e){
+      e.preventDefault();
+      const from=Number(e.dataTransfer.getData('text/plain')), to=i;
+      if(isNaN(from)||from===to) return;
+      const it=teamOrder.splice(from,1)[0];
+      teamOrder.splice(to,0,it);
+      renderTeamCombined(); renderTeamOrder();
+    });
+    el.appendChild(d);
+  });
+}
+renderTeamCombined();
+let roleOrder=['P','D','C','A'];
+let roleSlots={P:3,D:8,C:8,A:6}, roleMin={P:3,D:8,C:8,A:6};
+function renderRoleSlotsInputs(){
+  const c=document.getElementById('roleSlotsInputs'); if(!c) return;
+  c.innerHTML=ROLES.map(r=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#0c0a1e;border:1px solid var(--line);border-radius:8px"><span class="role-dot ${r}">${r}</span><span style="font-weight:700;font-size:12px;flex:1">${ROLE_NAMES[r]}</span><label style="font-size:11px;color:var(--muted)">min <input type="number" min="0" max="15" value="${roleMin[r]}" data-role="${r}" data-type="min" style="width:56px;padding:6px 8px;margin-left:4px"></label><label style="font-size:11px;color:var(--muted)">max <input type="number" min="1" max="15" value="${roleSlots[r]}" data-role="${r}" data-type="max" style="width:56px;padding:6px 8px;margin-left:4px"></label></div>`).join('');
+  c.querySelectorAll('input').forEach(inp=> inp.addEventListener('input', e=>{
+    const r=e.target.dataset.role, t=e.target.dataset.type, v=Number(e.target.value);
+    if(t==='min') roleMin[r]=v; else roleSlots[r]=v;
+  }));
+}
+async function saveRoleSlots(){
+  const r=await fetch('/set-role-slots',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slots:roleSlots, mins:roleMin})});
+  const j=await r.json(); document.getElementById('slotStatus').textContent=j.ok?'Slot salvati':'Errore: '+j.error;
+  if(j.ok){ roleSlots=j.roleSlots||roleSlots; roleMin=j.roleMin||roleMin; }
+}
+function renderOrder(){
+  const el=document.getElementById('roleOrderList'); el.innerHTML='';
+  roleOrder.forEach((r,i)=>{
+    const d=document.createElement('div'); d.className='order-item'; d.draggable=true;
+    d.innerHTML=`<span style="opacity:.5">⠿</span><span class="role-dot ${r}">${r}</span><span style="font-weight:800">${ROLE_NAMES[r]}</span><span style="margin-left:auto;color:var(--muted);font-size:12px">#${i+1}</span>`;
+    d.ondragstart=e=>e.dataTransfer.setData('text/plain',i);
+    d.ondragover=e=>e.preventDefault();
+    d.ondrop=e=>{ e.preventDefault(); const from=Number(e.dataTransfer.getData('text/plain')), to=i; const it=roleOrder.splice(from,1)[0]; roleOrder.splice(to,0,it); renderOrder(); };
+    el.appendChild(d);
+  });
+}
+renderOrder();
+renderRoleSlotsInputs();
+function renderRoleCombined(){
+  const el=document.getElementById('roleCombinedList'); if(!el) return; el.innerHTML='';
+  roleOrder.forEach((r,i)=>{
+    const d=document.createElement('div'); d.className='order-item'; d.draggable=true; d.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 10px;background:#0c0a1e;border:1px solid var(--line);border-radius:10px;cursor:grab';
+    d.innerHTML=`<span style="opacity:.5;cursor:grab">⠿</span><span class="role-dot ${r}">${r}</span><span style="font-weight:800;flex:1">${ROLE_NAMES[r]}</span><label style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px">min <input type="number" min="0" max="15" value="${roleMin[r]}" data-role="${r}" data-type="min" style="width:48px;padding:6px 6px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:8px;color:var(--text)"></label><label style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px">max <input type="number" min="1" max="15" value="${roleSlots[r]}" data-role="${r}" data-type="max" style="width:48px;padding:6px 6px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:8px;color:var(--text)"></label><span style="color:var(--muted);font-size:11px">#${i+1}</span>`;
+    d.addEventListener('dragstart', function(e){ e.dataTransfer.setData('text/plain', i); });
+    d.addEventListener('dragover', function(e){ e.preventDefault(); });
+    d.addEventListener('drop', function(e){
+      e.preventDefault();
+      const from=Number(e.dataTransfer.getData('text/plain')), to=i;
+      const it=roleOrder.splice(from,1)[0];
+      roleOrder.splice(to,0,it);
+      renderRoleCombined(); renderOrder();
+    });
+    d.querySelectorAll('input').forEach(function(inp){
+      inp.addEventListener('mousedown', function(e){ e.stopPropagation(); });
+      inp.addEventListener('input', function(e){
+        const role=e.target.dataset.role, type=e.target.dataset.type, v=Number(e.target.value);
+        if(type==='min') roleMin[role]=v; else roleSlots[role]=v;
+      });
+    });
+    el.appendChild(d);
+  });
+}
+renderRoleCombined();
+function onCsvFileChange(){ const inp=document.getElementById('csvFile'); const lbl=document.getElementById('csvFileName'); if(!inp||!lbl) return; const f=inp.files[0]; lbl.textContent=f?f.name:'Nessun file selezionato'; }
+async function uploadCsv(){ const f=document.getElementById('csvFile').files[0]; if(!f) return alert('Seleziona CSV'); const fd=new FormData(); fd.append('file',f); const r=await fetch('/upload-players',{method:'POST',body:fd}); const j=await r.json(); document.getElementById('csvStatus').textContent=j.ok?`Caricati ${j.count} giocatori`:`Errore: ${j.error}`; }
+async function saveTeamNames(){ const names=[]; for(let i=1;i<=8;i++) names.push(document.getElementById('team'+i).value.trim()||(DEFAULT_TEAM_NAMES[i-1]||'Squadra '+i)); const r=await fetch('/set-team-names',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({names})}); const j=await r.json(); document.getElementById('teamStatus').textContent=j.ok?'Squadre salvate':'Errore: '+j.error; if(j.ok) syncTeamOrderNames(); }
+async function saveRoleOrder(){ const r=await fetch('/set-role-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({order:roleOrder})}); const j=await r.json(); document.getElementById('roleStatus').textContent=j.ok?'Ordine salvato':'Errore: '+j.error; }
+async function saveSquadre(){
+  const s1=document.getElementById('teamStatus'), s2=document.getElementById('teamOrderStatus');
+  if(s1) s1.textContent='Salvataggio...'; if(s2) s2.textContent='';
+  if(s1) s1.style.color='var(--muted)'; if(s2) s2.style.color='var(--muted)';
+  // cattura ordine/nomi prima di qualsiasi fetch per evitare race con socket
+  const orderToSave=[...teamOrder];
+  const namesToSave=orderToSave.map(function(n){ return (n||'').trim()||'Squadra'; }).slice(0,8);
+  while(namesToSave.length<8) namesToSave.push('Squadra '+(namesToSave.length+1));
+  if(new Set(namesToSave.map(function(n){return n.toLowerCase();})).size!==namesToSave.length){ if(s1){ s1.textContent='Errore: nomi duplicati'; s1.style.color='var(--danger)'; } return; }
+  try{
+    const r1=await fetch('/set-team-names',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({names:namesToSave})});
+    const j1=await r1.json();
+    if(!j1.ok){ if(s1){ s1.textContent='Errore nomi: '+(j1.error||''); s1.style.color='var(--danger)'; } return; }
+    for(let i=1;i<=8;i++){ const inp=document.getElementById('team'+i); if(inp) inp.value=namesToSave[i-1]; }
+    const r2=await fetch('/set-team-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({order:orderToSave})});
+    const j2=await r2.json();
+    if(!j2.ok){ if(s2){ s2.textContent='Errore ordine: '+(j2.error||''); s2.style.color='var(--danger)'; } if(s1){ s1.textContent='Nomi salvati, ordine fallito'; s1.style.color='var(--danger)'; } return; }
+    if(s1){ s1.textContent='Squadre salvate (nomi + ordine)'; s1.style.color='var(--accent)'; }
+    if(s2) s2.textContent='';
+  }catch(e){ if(s1){ s1.textContent='Errore rete'; s1.style.color='var(--danger)'; } }
+}
+async function saveRuoli(){
+  const s1=document.getElementById('roleStatus'), s2=document.getElementById('slotStatus');
+  if(s1) s1.textContent='Salvataggio...'; if(s2) s2.textContent='';
+  if(s1) s1.style.color='var(--muted)'; if(s2) s2.style.color='var(--muted)';
+  // cattura valori prima di fetch per evitare race con socket che sovrascrive dopo primo POST
+  const orderToSave=[...roleOrder];
+  const slotsToSave={...roleSlots};
+  const minsToSave={...roleMin};
+  try{
+    const r1=await fetch('/set-role-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({order:orderToSave})});
+    const j1=await r1.json();
+    if(!j1.ok){ if(s1){ s1.textContent='Errore ordine: '+(j1.error||''); s1.style.color='var(--danger)'; } return; }
+    if(s1){ s1.textContent='Ordine salvato'; s1.style.color='var(--accent)'; }
+    const r2=await fetch('/set-role-slots',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slots:slotsToSave, mins:minsToSave})});
+    const j2=await r2.json();
+    if(!j2.ok){ if(s2){ s2.textContent='Errore slot: '+(j2.error||''); s2.style.color='var(--danger)'; } return; }
+    if(s2){ s2.textContent='Slot salvati'; s2.style.color='var(--accent)'; }
+    if(j2.roleSlots) roleSlots=j2.roleSlots; if(j2.roleMin) roleMin=j2.roleMin;
+    if(s1) s1.textContent='Ruoli salvati (ordine + slot)';
+    renderRoleCombined(); renderRoleSlotsInputs(); renderOrder();
+  }catch(e){ if(s1){ s1.textContent='Errore rete'; s1.style.color='var(--danger)'; } }
+}
+async function saveTimer(){
+  const v=Number(document.getElementById('timerInput').value);
+  const p=Number(document.getElementById('pendingTimerInput').value);
+  const payload={};
+  if(!isNaN(v)) payload.seconds=v;
+  if(!isNaN(p)) payload.pendingSeconds=p;
+  const r=await fetch('/set-countdown',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  const j=await r.json();
+  document.getElementById('timerStatus').textContent=j.ok?`Timer asta ${j.countdownSeconds}s / prima offerta ${j.pendingCountdownSeconds}s`:`Errore: ${j.error}`;
+}
+function goToAsta(){ document.getElementById('setupScreen').classList.add('hidden'); const ls=document.getElementById('landingScreen'); if(ls) ls.classList.add('hidden'); const li=document.getElementById('landingInline'); if(li) li.classList.add('hidden'); document.getElementById('astaScreen').classList.remove('hidden'); }
+function showSetup(){ document.getElementById('astaScreen').classList.add('hidden'); const ls=document.getElementById('landingScreen'); if(ls) ls.classList.add('hidden'); const li=document.getElementById('landingInline'); if(li) li.classList.add('hidden'); document.getElementById('setupScreen').classList.remove('hidden'); landingDismissed=true; }
+function skipPlayer(){ fetch('/skip-player',{method:'POST'}); }
+async function nextRole(){
+  const r=await fetch('/next-role',{method:'POST'});
+  const j=await r.json();
+  if(!j.ok) alert(j.error||'Impossibile passare al ruolo successivo');
+}
+let landingDismissed=false;
+function startAstaFromLanding(){ landingDismissed=true; const li=document.getElementById('landingInline'); if(li) li.classList.add('hidden'); const ls=document.getElementById('landingScreen'); if(ls) ls.classList.add('hidden'); }
+async function startAsta(){
+  const btn=document.getElementById('adminStartBtn');
+  const msgEl=document.getElementById('adminPreStartMsg');
+  if(btn) { btn.disabled=true; btn.textContent='Avvio...'; }
+  if(msgEl) { msgEl.classList.add('hidden'); msgEl.textContent=''; }
+  try{
+    const r=await fetch('/start-auction',{method:'POST'});
+    const j=await r.json();
+    if(!j.ok){
+      if(msgEl){ msgEl.textContent=j.error||'Errore avvio'; msgEl.classList.remove('hidden'); msgEl.style.color='var(--danger)'; }
+      if(btn){ btn.disabled=false; btn.textContent='Inizia asta'; }
+    }
+  }catch(e){
+    if(msgEl){ msgEl.textContent='Errore rete'; msgEl.classList.remove('hidden'); msgEl.style.color='var(--danger)'; }
+    if(btn){ btn.disabled=false; btn.textContent='Inizia asta'; }
+  }
+}
+async function createBackup(){
+  const btn=document.querySelector('#backupStatus');
+  if(btn) btn.textContent='Creazione backup...';
+  try{
+    const r=await fetch('/backup',{method:'POST'});
+    const j=await r.json();
+    document.getElementById('backupStatus').textContent=j.ok?`Backup creato: ${j.backup}`:`Errore: ${j.error}`;
+    document.getElementById('backupStatus').style.color=j.ok?'var(--accent)':'var(--danger)';
+    loadBackupList();
+  }catch(e){ document.getElementById('backupStatus').textContent='Errore rete'; document.getElementById('backupStatus').style.color='var(--danger)'; }
+}
+async function loadBackupList(){
+  try{
+    const r=await fetch('/backups');
+    const j=await r.json();
+    const el=document.getElementById('backupList');
+    if(!el) return;
+    if(!j.backups || !j.backups.length) el.innerHTML='<span style="opacity:.6">Nessun backup</span>';
+    else el.innerHTML=j.backups.slice(0,10).map(b=>`<div style="padding:4px 0;border-bottom:1px solid var(--line)">${b}</div>`).join('');
+  }catch(e){}
+}
+async function resetAsta(){
+  if(!confirm('Sei sicuro di voler riavviare l\'asta? Rose e stato verranno azzerati.')) return;
+  const el=document.getElementById('resetStatus');
+  if(el) el.textContent='Riavvio...';
+  try{
+    const r=await fetch('/reset-auction',{method:'POST'});
+    const j=await r.json();
+    if(el) { el.textContent=j.ok?'Asta riavviata — torna alla dashboard':'Errore: '+(j.error||''); el.style.color=j.ok?'var(--accent)':'var(--danger)'; }
+  }catch(e){ if(el){ el.textContent='Errore rete'; el.style.color='var(--danger)'; } }
+}
+// drag & drop assegnazione a 1 credito
+let draggedPlayerId=null;
+function handleDragStart(e, playerId){
+  draggedPlayerId=String(playerId);
+  e.target.classList.add('dragging');
+  e.dataTransfer.setData('text/plain', draggedPlayerId);
+  e.dataTransfer.effectAllowed='copy';
+  // evidenzia squadre che possono ricevere
+  const player=latest ? latest.allPlayers.find(p=>p.id===draggedPlayerId) : null;
+  document.querySelectorAll('.team-col').forEach(col=>{
+    const teamName=col.dataset.teamName;
+    const team=latest ? latest.teams.find(t=>t.name===teamName) : null;
+    let canAccept=false;
+    if(player && team){
+      const cnt=team.squad.filter(p=>p.ruolo===player.ruolo).length;
+      const max=latest.roleSlots ? (latest.roleSlots[player.ruolo]||0) : 0;
+      canAccept=cnt < max;
+    }
+    col.classList.add(canAccept ? 'drop-target' : 'drop-invalid');
+  });
+}
+function handleDragEnd(e){
+  if(e.target) e.target.classList.remove('dragging');
+  draggedPlayerId=null;
+  document.querySelectorAll('.team-col').forEach(col=>col.classList.remove('drop-target','drop-invalid','drag-over'));
+}
+function handleTeamDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect='copy';
+  e.currentTarget.classList.add('drag-over');
+}
+function handleTeamDragLeave(e){
+  e.currentTarget.classList.remove('drag-over');
+}
+async function handleTeamDrop(e, teamName){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const pid=draggedPlayerId || e.dataTransfer.getData('text/plain');
+  document.querySelectorAll('.team-col').forEach(col=>col.classList.remove('drop-target','drop-invalid','drag-over'));
+  if(!pid) return;
+  const r=await fetch('/assign-player',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({playerId:pid, teamName, prezzo:1})});
+  const j=await r.json();
+  if(!j.ok) alert(j.error||'Assegnazione fallita');
+  draggedPlayerId=null;
+}
+function switchTab(t){ tab=t; document.getElementById('tabPlayers').classList.toggle('active',t==='players'); document.getElementById('tabAssign').classList.toggle('active',t==='assign'); document.getElementById('playersPanel').classList.toggle('hidden',t!=='players'); document.getElementById('assignPanel').classList.toggle('hidden',t!=='assign'); }
+function toggleSidebar(){ const sb=document.getElementById('sidebar'); if(!sb) return; sb.classList.toggle('mobile-hidden'); }
+(function initMobileSidebar(){
+  function update(){ const sb=document.getElementById('sidebar'); const btn=document.getElementById('mobileMenuBtn'); if(!sb||!btn) return; if(window.innerWidth<=900){ if(!sb.dataset.init){ sb.classList.add('mobile-hidden'); sb.dataset.init='1'; } } else { sb.classList.remove('mobile-hidden'); } }
+  window.addEventListener('resize', update); document.addEventListener('DOMContentLoaded', update); setTimeout(update, 100);
+})();
+function toggleFullscreen(){
+  if(!document.fullscreenElement){ document.documentElement.requestFullscreen().catch(function(e){ console.log(e); }); }
+  else { document.exitFullscreen().catch(function(e){ console.log(e); }); }
+}
+document.addEventListener('fullscreenchange', function(){
+  const btn=document.getElementById('fsBtn'); if(!btn) return;
+  btn.textContent = document.fullscreenElement ? '⛶ Esci' : '⛶ Fullscreen';
+});
+function renderFilters(){ const el=document.getElementById('roleFilters'); el.innerHTML=`<div class="fpill all ${!roleFilter?'active':''}" onclick="setF(null)">Tutti</div>`+ROLES.map(r=>`<div class="fpill ${r} ${roleFilter===r?'active':''}" onclick="setF('${r}')">${r}</div>`).join(''); renderAdminTeamFilter(); }
+function setF(r){ roleFilter=r; renderFilters(); renderPlayers(); }
+function renderAdminTeamFilter(){
+  const sel=document.getElementById('adminTeamFilter'); if(!sel || !latest) return;
+  const squads=[...new Set((latest.allPlayers||[]).map(function(p){return p.squadra;}))].filter(Boolean).sort();
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Squadra</option>'+squads.map(function(sq){ return '<option value="'+sq.replace(/"/g,'&quot;')+'"'+(adminTeamFilter===sq?' selected':'')+'>'+sq+'</option>'; }).join('');
+  if(adminTeamFilter && !squads.includes(adminTeamFilter)){ adminTeamFilter=null; sel.value=''; }
+  else if(adminTeamFilter) sel.value=adminTeamFilter;
+  else sel.value=cur && squads.includes(cur) ? cur : '';
+}
+function setAdminTeamFilter(v){ adminTeamFilter=v||null; renderPlayers(); }
+function renderPlayers(){
+  if(!latest) return;
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  let list=latest.allPlayers||[];
+  if(roleFilter) list=list.filter(p=>p.ruolo===roleFilter);
+  if(adminTeamFilter) list=list.filter(p=>p.squadra===adminTeamFilter);
+  if(q) list=list.filter(p=>p.nome.toLowerCase().includes(q)||(p.squadra||'').toLowerCase().includes(q));
+  // ordina per ruolo (P>D>C>A) poi per Q decrescente
+  const order={P:0,D:1,C:2,A:3};
+  list.sort(function(a,b){ var ra=order[a.ruolo]??9, rb=order[b.ruolo]??9; if(ra!==rb) return ra-rb; return (b.valutazione||0)-(a.valutazione||0); });
+  const el=document.getElementById('playersList');
+  el.innerHTML=list.slice(0,300).map(p=>{ const a=latest.assigned[p.id]; const assignedLabel=a?` <span style="color:var(--accent);font-size:10px">${a.team} (${a.prezzo})</span>`:''; const draggable=!a?'true':'true'; return `<div class="row ${a?'assigned':''}" draggable="${draggable}" data-player-id="${p.id}" ondragstart="handleDragStart(event,'${p.id}')" ondragend="handleDragEnd(event)" onclick="openPlayerModal('${p.id}')" title="${a?'Trascina per riassegnare a 1 cr':'Trascina su una squadra per assegnare a 1 cr'}"><div class="l"><span class="role ${p.ruolo}">${p.ruolo}</span><div><div class="nm">${p.nome}${assignedLabel}</div><div class="team">${p.squadra||''}</div></div></div><div class="fvm">${p.valutazione??''}</div></div>`; }).join('') || `<div style="color:var(--muted);text-align:center;padding:20px;font-size:12px">Nessun calciatore</div>`;
+}
+function renderAssign(){
+  if(!latest) return;
+  const el=document.getElementById('assignList');
+  const arr=latest.recentAssignments||[];
+  el.innerHTML=arr.length? arr.map(a=>`<div class="assign" onclick="openPlayerModal('${a.player.id}')" style="cursor:pointer" title="Clicca per gestire"><div><div style="display:flex;align-items:center;gap:6px"><span class="role-dot ${a.player.ruolo}" style="width:16px;height:16px;font-size:9px;display:inline-flex;align-items:center;justify-content:center">${a.player.ruolo}</span><b style="font-size:13px">${a.player.nome}</b></div><div class="a-team">${a.team}</div></div><div class="a-price">${a.prezzo}</div></div>`).join('') : `<div style="color:var(--muted);text-align:center;padding:20px;font-size:12px">Nessuna assegnazione</div>`;
+}
+let currentPlayerModalId=null;
+function openPlayerModal(playerId){
+  if(!latest) return;
+  const p=latest.allPlayers.find(x=>x.id===String(playerId));
+  if(!p) return;
+  currentPlayerModalId=String(playerId);
+  const assigned=latest.assigned[currentPlayerModalId];
+  document.getElementById('pmName').textContent=p.nome;
+  const photo=document.getElementById('pmPhoto');
+  if(p.card){ photo.src=p.card; photo.style.display='block'; photo.onerror=()=>photo.style.display='none'; } else photo.style.display='none';
+  const info=document.getElementById('pmInfo');
+  info.innerHTML=`<div><b>Ruolo:</b> <span class="role-dot ${p.ruolo}" style="width:16px;height:16px;font-size:9px">${p.ruolo}</span> ${ROLE_NAMES[p.ruolo]||p.ruolo}</div>
+    <div><b>squadra:</b> ${p.squadra||'—'}</div>
+    <div><b>Q:</b> <span style="color:var(--accent);font-weight:900">${p.valutazione??'—'}</span></div>
+    <div><b>ID:</b> ${p.id}</div>`;
+  const assignedEl=document.getElementById('pmAssigned');
+  assignedEl.textContent=assigned? `Attualmente: ${assigned.team}` : 'Non assegnato';
+  assignedEl.style.color=assigned? 'var(--accent)':'var(--muted)';
+  const sel=document.getElementById('pmTeamSelect');
+  sel.innerHTML='<option value="">— Seleziona squadra —</option>' + latest.teams.map(t=>`<option value="${t.name}" ${assigned&&assigned.team===t.name?'selected':''}>${t.name}</option>`).join('');
+  document.getElementById('pmPrice').value=assigned? assigned.prezzo : 1;
+  document.getElementById('pmStatus').textContent='';
+  document.getElementById('pmRemoveBtn').style.display=assigned? '':'none';
+  document.getElementById('playerModal').classList.remove('hidden');
+}
+function closePlayerModal(){ document.getElementById('playerModal').classList.add('hidden'); currentPlayerModalId=null; }
+async function assignPlayerFromModal(){
+  if(!currentPlayerModalId) return;
+  const teamName=document.getElementById('pmTeamSelect').value;
+  const prezzo=Number(document.getElementById('pmPrice').value);
+  if(!teamName) { document.getElementById('pmStatus').textContent='Seleziona una squadra'; return; }
+  if(!prezzo || prezzo<1) { document.getElementById('pmStatus').textContent='Prezzo non valido'; return; }
+  const r=await fetch('/assign-player',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({playerId:currentPlayerModalId, teamName, prezzo})});
+  const j=await r.json();
+  document.getElementById('pmStatus').textContent=j.ok?'Assegnato a '+teamName+' per '+prezzo+' cr':'Errore: '+(j.error||'');
+  document.getElementById('pmStatus').style.color=j.ok?'var(--accent)':'var(--danger)';
+  if(j.ok) setTimeout(closePlayerModal,800);
+}
+async function unassignPlayer(){
+  if(!currentPlayerModalId) return;
+  const r=await fetch('/assign-player',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({playerId:currentPlayerModalId, teamName:'', prezzo:0})});
+  const j=await r.json();
+  document.getElementById('pmStatus').textContent=j.ok?'Svincolato':'Errore: '+(j.error||'');
+  document.getElementById('pmStatus').style.color=j.ok?'var(--accent)':'var(--danger)';
+  if(j.ok) setTimeout(closePlayerModal,800);
+}
+// roster editor
+let editTeams=null;
+let rosterRoleFilter=null;
+function renderRosterRoleFilters(){
+  const el=document.getElementById('rosterRoleFilters');
+  if(!el) return;
+  el.innerHTML=`<div class="fpill all ${!rosterRoleFilter?'active':''}" onclick="setRosterRole(null)" style="padding:6px 12px">Tutti</div>`+ROLES.map(r=>`<div class="fpill ${r} ${rosterRoleFilter===r?'active':''}" onclick="setRosterRole('${r}')" style="padding:6px 12px">${r}</div>`).join('');
+}
+function setRosterRole(r){ rosterRoleFilter=r; renderRosterRoleFilters(); renderRosterGrid(); }
+function openRosterEditor(){
+  if(!latest) return;
+  editTeams = JSON.parse(JSON.stringify(latest.teams));
+  rosterRoleFilter=null;
+  const rs=document.getElementById('rosterSearch'); if(rs) rs.value='';
+  renderRosterRoleFilters();
+  renderRosterGrid();
+  document.getElementById('rosterModal').classList.remove('hidden');
+}
+function closeRoster(){ document.getElementById('rosterModal').classList.add('hidden'); }
+function renderRosterGrid(){
+  const grid=document.getElementById('rosterGrid'); grid.innerHTML='';
+  const q=(document.getElementById('rosterSearch')?.value||'').toLowerCase();
+  let available=(latest.allPlayers||[]).filter(pl=>!editTeams.some(t=>t.squad.some(s=>s.playerId===pl.id)));
+  if(rosterRoleFilter) available=available.filter(pl=>pl.ruolo===rosterRoleFilter);
+  if(q) available=available.filter(pl=>pl.nome.toLowerCase().includes(q) || (pl.squadra||'').toLowerCase().includes(q));
+  editTeams.forEach((team, ti)=>{
+    const div=document.createElement('div'); div.className='team-editor';
+    const sum=team.squad.reduce((s,p)=>s+Number(p.prezzo||0),0);
+    const credits=500 - sum;
+    team.credits=credits;
+    let rows=team.squad.map((p,pi)=>`<tr><td><input type="text" value="${p.nome}" data-ti="${ti}" data-pi="${pi}" data-f="nome"></td><td style="width:50px;text-align:center"><span class="role-dot ${p.ruolo}">${p.ruolo}</span></td><td style="width:90px"><input type="number" min="1" value="${p.prezzo}" data-ti="${ti}" data-pi="${pi}" data-f="prezzo"></td><td style="width:40px"><button class="mini-btn danger" onclick="removeFromTeam(${ti},${pi})">✕</button></td></tr>`).join('');
+    const opts=available.map(pl=>`<option value="${pl.id}">${pl.nome} (${pl.ruolo} - ${pl.squadra}) — ${pl.valutazione??''}</option>`).join('');
+    div.innerHTML=`<h4><span>${team.name}</span><span id="cr${ti}" style="color:var(--accent)">${credits} cr</span></h4>
+      <table><thead><tr><th>Giocatore</th><th>R</th><th>Prezzo</th><th></th></tr></thead><tbody>${rows || `<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:10px">Nessun giocatore</td></tr>`}</tbody></table>
+      <div style="display:flex;gap:6px;margin-top:8px"><select id="addSel${ti}" style="flex:1"><option value="">+ aggiungi giocatore${available.length?` (${available.length})` : ''}</option>${opts}</select><button class="mini-btn" onclick="addToTeam(${ti})">Aggiungi a 1 cr</button></div>`;
+    grid.appendChild(div);
+  });
+  grid.querySelectorAll('input').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      const ti=Number(e.target.dataset.ti), pi=Number(e.target.dataset.pi), f=e.target.dataset.f;
+      if(editTeams[ti] && editTeams[ti].squad[pi]){
+        editTeams[ti].squad[pi][f]= f==='prezzo'? Number(e.target.value)||0 : e.target.value;
+        const sum2=editTeams[ti].squad.reduce((s,p)=>s+Number(p.prezzo||0),0);
+        editTeams[ti].credits=500-sum2;
+        const crEl=document.getElementById('cr'+ti);
+        if(crEl) crEl.textContent=editTeams[ti].credits+' cr';
+      }
+    });
+  });
+}
+function removeFromTeam(ti,pi){ editTeams[ti].squad.splice(pi,1); renderRosterGrid(); }
+function addToTeam(ti){
+  const sel=document.getElementById('addSel'+ti); const pid=sel.value; if(!pid) return;
+  const pl=(latest.allPlayers||[]).find(x=>x.id===pid); if(!pl) return;
+  editTeams[ti].squad.push({playerId:pl.id, nome:pl.nome, ruolo:pl.ruolo, prezzo:1});
+  renderRosterGrid();
+}
+async function saveRosters(){
+  const r=await fetch('/set-rosters',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({teams:editTeams})});
+  const j=await r.json();
+  document.getElementById('rosterStatus').textContent=j.ok?'Rose salvate':'Errore: '+j.error;
+  if(j.ok) setTimeout(closeRoster,800);
+}
+function openTeamsOverview(){
+  if(!latest) return;
+  renderTeamsOverview();
+  document.getElementById('teamsOverviewModal').classList.remove('hidden');
+}
+function closeTeamsOverview(){ document.getElementById('teamsOverviewModal').classList.add('hidden'); }
+function renderTeamsOverview(){
+  if(!latest) return;
+  const grid=document.getElementById('teamsOverviewGrid'); if(!grid) return;
+  grid.innerHTML='';
+  const totalMax=Object.values(latest.roleSlots||roleSlots).reduce((a,b)=>a+b,0);
+  const totalMin=Object.values(latest.roleMin||roleMin).reduce((a,b)=>a+b,0);
+  latest.teams.forEach(function(team){
+    const div=document.createElement('div'); div.className='team-editor';
+    const by={}; team.squad.forEach(function(p){ by[p.ruolo]=(by[p.ruolo]||0)+1; });
+    const remaining=totalMin - team.squad.length;
+    const maxVal=Math.max(0, team.credits - Math.max(0, remaining-1));
+    let slotsHtml=ROLES.map(function(r){
+      const c=by[r]||0, max=(latest.roleSlots||roleSlots)[r]||0;
+      let cls='low'; if(max && c>=max) cls='full'; else if(c>0) cls='ok';
+      return '<div class="s '+cls+'">'+r+' '+c+'/'+max+'</div>';
+    }).join('')+'<div class="s '+(team.squad.length>=totalMax?'full':'low')+'">TOT '+team.squad.length+'/'+totalMax+'</div>';
+    let rosterHtml='';
+    if(!team.squad.length) rosterHtml='<div style="color:var(--muted);text-align:center;padding:12px;font-size:12px">Nessun giocatore</div>';
+    else {
+      rosterHtml='<div style="display:flex;flex-direction:column;gap:4px;margin-top:8px">';
+      ROLES.forEach(function(r){
+        const pls=team.squad.filter(function(p){return p.ruolo===r;});
+        if(!pls.length) return;
+        rosterHtml+='<div style="font-size:10px;font-weight:800;color:var(--muted);margin-top:4px">'+ROLE_NAMES[r]+'</div>';
+        pls.forEach(function(p){
+          rosterHtml+='<div class="player-chip"><div class="left"><span class="role-dot '+p.ruolo+'" style="width:14px;height:14px;font-size:8px">'+p.ruolo+'</span><span class="nm">'+p.nome+'</span></div><span class="pr">'+p.prezzo+'</span></div>';
+        });
+      });
+      rosterHtml+='</div>';
+    }
+    div.innerHTML='<h4><span>'+team.name+'</span></h4>'
+      +'<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin:6px 0;font-weight:700"><span>BUDGET <b style="color:var(--text)">'+team.credits+'</b></span><span>MAX <b style="color:var(--gold)">'+maxVal+'</b></span></div>'
+      +'<div class="slots" style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">'+slotsHtml+'</div>'
+      +rosterHtml;
+    grid.appendChild(div);
+  });
+}
+
+function handleState(s){
+  latest=s;
+  const isPreStart = !s.auctionStarted && !s.auctionFinished;
+  // landing fixed sempre nascosto (il pre-start è dentro playerCard)
+  const landingElFixed=document.getElementById('landingScreen');
+  if(landingElFixed) landingElFixed.classList.add('hidden');
+  const adminPreStart=document.getElementById('adminPreStart');
+  const emptyPre=document.getElementById('emptyState'), filledPre=document.getElementById('filledState');
+  const timerPre=document.getElementById('timer'), actionBtnPre=document.getElementById('actionBtn');
+  if(!document.getElementById('setupScreen').classList.contains('hidden')){
+    if(typeof loadBackupList==='function') loadBackupList();
+  }
+  const rb=document.getElementById('roleBadge'); if(rb) rb.textContent=s.currentRoleName? s.currentRoleName : (s.auctionFinished?'ASTA TERMINATA':'—');
+  document.getElementById('timerInput').value=s.countdownSeconds||10;
+  const pendInput=document.getElementById('pendingTimerInput'); if(pendInput) pendInput.value=s.pendingCountdownSeconds||30;
+  const isEditingRolesForState = document.activeElement && document.activeElement.closest && (document.activeElement.closest('#roleSlotsInputs') || document.activeElement.closest('#roleCombinedList') || document.activeElement.closest('#roleOrderList'));
+  if(!isEditingRolesForState){
+    if(s.roleSlots) roleSlots=s.roleSlots;
+    if(s.roleMin) roleMin=s.roleMin;
+  }
+  if(s.roleOrder && Array.isArray(s.roleOrder) && !document.activeElement?.closest?.('#roleOrderList') && !document.activeElement?.closest?.('#roleCombinedList')){
+    roleOrder=[...s.roleOrder]; renderOrder(); renderRoleCombined();
+  }
+  if(s.teamCallOrder && Array.isArray(s.teamCallOrder) && !document.activeElement?.closest?.('#teamOrderList') && !document.activeElement?.closest?.('#teamCombinedList')){
+    teamOrder=[...s.teamCallOrder]; renderTeamOrder(); renderTeamCombined();
+    // sync legacy hidden inputs per compatibilità
+    for(let i=1;i<=8;i++){ const inp=document.getElementById('team'+i); if(inp && teamOrder[i-1]!==undefined) inp.value=teamOrder[i-1]; }
+  } else if(!document.activeElement?.closest?.('#teamCombinedList')){
+    // se l'utente sta editando nella combined, non sovrascrivere
+    renderTeamCombined();
+  }
+  const activeRoleInput=document.activeElement && document.activeElement.closest && (document.activeElement.closest('#roleSlotsInputs') || document.activeElement.closest('#roleCombinedList'));
+  if(!activeRoleInput){ renderRoleSlotsInputs(); renderRoleCombined(); }
+  document.getElementById('auctionInfo').textContent=s.playersLoaded? `${s.totalAssigned}/${s.playersLoaded} assegnati` : '';
+  const empty=document.getElementById('emptyState'), filled=document.getElementById('filledState'), img=document.getElementById('playerPhoto');
+  const timer=document.getElementById('timer');
+  const actionBtn=document.getElementById('actionBtn');
+  // rimuove eventuale banner turno/fine asta iniettato in precedenza
+  const oldBanner=document.getElementById('injectedBanner'); if(oldBanner) oldBanner.remove();
+  const oldPending=document.getElementById('pendingNotice'); if(oldPending) oldPending.remove();
+  // sfondo leggero per ruolo
+  const playerCardEl=document.getElementById('playerCard');
+  if(playerCardEl){
+    playerCardEl.classList.remove('role-P','role-D','role-C','role-A');
+    let roleForBg=null;
+    if(s.currentAuction) roleForBg=s.currentAuction.player.ruolo;
+    else if(s.pendingSelection) roleForBg=s.pendingSelection.player.ruolo;
+    else if(s.currentCallerTeam) roleForBg=s.callerInfo?.role || s.currentRole;
+    if(roleForBg) playerCardEl.classList.add('role-'+roleForBg);
+  }
+  if(assignedDisplay){
+    const t=document.getElementById('timer');
+    if(t){ t.textContent='GIOCATORE ASSEGNATO'; t.classList.remove('hidden-t','danger'); t.style.setProperty('font-size','13px','important'); t.style.setProperty('letter-spacing','1.8px','important'); t.style.setProperty('color','var(--accent)','important'); t.style.setProperty('text-shadow','0 1px 8px rgba(0,230,184,.25)','important'); t.style.setProperty('min-width','auto','important'); t.style.setProperty('font-weight','800','important'); t.style.setProperty('line-height','1.4','important'); t.style.setProperty('white-space','normal','important'); t.style.setProperty('word-break','break-word','important'); t.style.setProperty('text-align','center','important'); t.style.setProperty('padding','6px 0','important'); t.style.setProperty('max-width','100%','important'); }
+  } else if(isPreStart){
+    if(adminPreStart) adminPreStart.classList.remove('hidden');
+    empty.classList.add('hidden'); filled.classList.add('hidden'); filled.style.display='none';
+    timer.classList.add('hidden-t');
+    actionBtn.style.display='none';
+    const skipBtn2=document.getElementById('skipAuctionBtn'); if(skipBtn2) skipBtn2.style.display='none';
+    const nrb2=document.getElementById('nextRoleBtn'); if(nrb2) nrb2.style.display='none';
+    const ob2=document.getElementById('injectedBanner'); if(ob2) ob2.remove();
+    const op2=document.getElementById('pendingNotice'); if(op2) op2.remove();
+    const btnPre=document.getElementById('adminStartBtn'); if(btnPre){ btnPre.disabled = s.playersLoaded===0; btnPre.title = s.playersLoaded===0 ? 'Carica prima il CSV giocatori' : ''; }
+    if(playerCardEl) playerCardEl.classList.remove('role-P','role-D','role-C','role-A');
+  } else {
+    if(adminPreStart) adminPreStart.classList.add('hidden');
+    if(s.currentAuction){
+    empty.classList.add('hidden'); filled.classList.remove('hidden'); filled.style.display='flex';
+    const p=s.currentAuction.player;
+    if(p.card){ img.src=p.card; img.classList.remove('hidden-img'); img.onerror=()=>img.classList.add('hidden-img'); } else img.classList.add('hidden-img');
+    document.getElementById('playerName').textContent=p.nome;
+    document.getElementById('playerSquadra').textContent=p.squadra||'';
+    const dot=document.getElementById('playerRoleDot'); dot.textContent=p.ruolo; dot.className='role-dot '+p.ruolo;
+    document.getElementById('playerRoleTxt').textContent=ROLE_NAMES[p.ruolo]||p.ruolo;
+    document.getElementById('playerFvm').textContent=p.valutazione??'—';
+    document.getElementById('currentBid').textContent=s.currentAuction.currentBid;
+    document.getElementById('currentBidder').textContent=s.currentAuction.currentBidder||'—';
+    timer.classList.remove('hidden-t'); if(!s.currentAuction.deadline) timer.textContent='--';
+    actionBtn.textContent='✓ Assegna ora'; actionBtn.className='btn btn-accent'; actionBtn.style.display='';
+    actionBtn.onclick=()=>fetch('/finalize-now',{method:'POST'});
+    const skipBtn=document.getElementById('skipAuctionBtn'); if(skipBtn) skipBtn.style.display='';
+  } else if(s.pendingSelection){
+    empty.classList.add('hidden'); filled.classList.remove('hidden'); filled.style.display='flex';
+    const p=s.pendingSelection.player;
+    if(p.card){ img.src=p.card; img.classList.remove('hidden-img'); img.onerror=()=>img.classList.add('hidden-img'); } else img.classList.add('hidden-img');
+    document.getElementById('playerName').textContent=p.nome;
+    document.getElementById('playerSquadra').textContent=p.squadra||'';
+    const dot=document.getElementById('playerRoleDot'); dot.textContent=p.ruolo; dot.className='role-dot '+p.ruolo;
+    document.getElementById('playerRoleTxt').textContent=ROLE_NAMES[p.ruolo]||p.ruolo;
+    document.getElementById('playerFvm').textContent=p.valutazione??'—';
+    document.getElementById('currentBid').textContent='—';
+    document.getElementById('currentBidder').textContent='—';
+    timer.classList.add('hidden-t');
+    timer.textContent='--';
+    actionBtn.textContent='⏭ Annulla selezione'; actionBtn.className='btn btn-ghost'; actionBtn.style.display='';
+    actionBtn.onclick=()=>fetch('/skip-player',{method:'POST'});
+    const skipBtn=document.getElementById('skipAuctionBtn'); if(skipBtn) skipBtn.style.display='none';
+    // banner informativo sotto i box di offerta e in testa
+    const banner=document.createElement('div');
+    banner.id='pendingNotice';
+    banner.style.cssText='display:block;margin:12px auto 0;background:rgba(250,204,21,.15);border:1px solid rgba(250,204,21,.35);color:var(--gold);padding:8px 14px;border-radius:20px;font-size:11px;font-weight:800;text-align:center;white-space:nowrap;max-width:fit-content';
+    banner.textContent='In attesa della prima offerta di ' + s.pendingSelection.callerTeam;
+    const pcBid=document.querySelector('.pc-bid');
+    if(pcBid) pcBid.appendChild(banner);
+    else document.getElementById('playerCard').appendChild(banner);
+  } else {
+    const pendNotice=document.getElementById('pendingNotice'); if(pendNotice) pendNotice.remove();
+    filled.classList.add('hidden'); filled.style.display='none'; empty.classList.add('hidden');
+    timer.classList.add('hidden-t');
+    const skipBtn=document.getElementById('skipAuctionBtn'); if(skipBtn) skipBtn.style.display='none';
+    if(s.auctionFinished){
+      actionBtn.style.display='none';
+      const b=document.createElement('div'); b.id='injectedBanner'; b.className='admin-pre-start'; b.style.minHeight='220px';
+      b.innerHTML=`<div class="pre-titoletto">FANTACALCIO 2026</div><div class="pre-title">ASTA TERMINATA</div><div style="font-style:italic;color:var(--muted);font-size:16px;margin-top:8px;font-weight:500;letter-spacing:.2px">Buon campionato a tutti, che vinca il peggiore...</div>`;
+      document.getElementById('playerCard').appendChild(b);
+    } else if(s.currentCallerTeam){
+      actionBtn.textContent='⏭ Salta turno'; actionBtn.className='btn btn-ghost'; actionBtn.style.display='';
+      actionBtn.onclick=()=>fetch('/skip-turn',{method:'POST'});
+      const b=document.createElement('div'); b.id='injectedBanner'; b.className='turn-banner';
+      const ci=s.callerInfo||{};
+      const callerTeamObj=s.teams.find(t=>t.name===s.currentCallerTeam);
+      const budget=callerTeamObj? callerTeamObj.credits : 0;
+      let maxVal=budget;
+      if(callerTeamObj){ const totalMin=Object.values(s.roleMin||roleMin).reduce((a,b)=>a+b,0); const remaining=totalMin - callerTeamObj.squad.length; maxVal=Math.max(0, budget - Math.max(0, remaining-1)); }
+      b.innerHTML=`<div class="tn-left"><div class="tn-label">prossima chiamata</div><div class="tn-team">${s.currentCallerTeam}</div></div>
+        <div class="tn-right"><div class="tn-role"><span class="role-dot ${ci.role||''}">${ci.role||''}</span><span>${ci.roleName||''}</span></div>
+        <div class="tn-stats"><div>Slot<br><b>${ci.filled??0}/${ci.max??0}</b></div><div>Budget<br><b>${budget}</b></div><div>Max<br><b>${maxVal}</b></div></div></div>`;
+      document.getElementById('playerCard').appendChild(b);
+    } else {
+      actionBtn.style.display='none';
+      const b=document.createElement('div'); b.id='injectedBanner'; b.className='empty-msg'; b.textContent="In attesa dell'inizio";
+      document.getElementById('playerCard').appendChild(b);
+    }
+  }
+  }
+  const grid=document.getElementById('teamsGrid'); grid.innerHTML='';
+  const lead=s.currentAuction? s.currentAuction.currentBidder : null;
+  const totalMin=Object.values(s.roleMin||roleMin).reduce((a,b)=>a+b,0);
+  s.teams.forEach(t=>{
+    const col=document.createElement('div'); col.className='team-col'+(t.name===lead?' leading':'');
+    const by={}; t.squad.forEach(p=>{by[p.ruolo]=(by[p.ruolo]||0)+1});
+    const chips=t.squad.length? t.squad.map(p=>`<div class="player-chip" onclick="openPlayerModal('${p.playerId}')" style="cursor:pointer" title="Clicca per gestire"><div class="left"><span class="role-dot ${p.ruolo}" style="width:14px;height:14px;font-size:8px">${p.ruolo}</span><span class="nm">${p.nome}</span></div><span class="pr">${p.prezzo}</span></div>`).join('') : `<div class="empty-team"><div class="paws">🐾</div><span>Nessun calciatore<br>presente</span></div>`;
+    const slotsHtml=['P','D','C','A'].map(r=>{
+      const c=by[r]||0, max=s.roleSlots[r]||0, min=s.roleMin?s.roleMin[r]:0;
+      let cls='';
+      if(max && c>=max) cls='full';
+      else if(c>=min) cls='ok';
+      else cls='low';
+      return `<div class="s ${cls}">${r} ${c}/${max}</div>`;
+    }).join('')+`<div class="s">TOT ${t.squad.length}/25</div>`;
+    const remaining=totalMin - t.squad.length;
+    const maxVal=Math.max(0, t.credits - Math.max(0, remaining - 1));
+    col.innerHTML=`<div class="tcol-head"><span class="ico">◈</span><span class="tname">${t.name}</span></div><div class="tcol-body">${chips}</div><div class="tcol-foot"><div class="slots">${slotsHtml}</div><div class="foot-budget"><span>BUDGET <b>${t.credits}</b></span><span>MAX <b>${maxVal}</b></span></div></div>`;
+    col.dataset.teamName=t.name;
+    col.addEventListener('dragover', handleTeamDragOver);
+    col.addEventListener('dragleave', handleTeamDragLeave);
+    col.addEventListener('drop', (e)=>handleTeamDrop(e, t.name));
+    grid.appendChild(col);
+  });
+  // gestione pulsante ruolo successivo
+  const nextRoleBtn=document.getElementById('nextRoleBtn');
+  if(nextRoleBtn){
+    const canShow=!s.auctionFinished && !s.currentAuction && !s.pendingSelection && !!s.currentRole;
+    if(!canShow){
+      nextRoleBtn.style.display='none';
+    } else {
+      nextRoleBtn.style.display='';
+      const role=s.currentRole;
+      const min=s.roleMin ? (s.roleMin[role]||0) : 0;
+      const canAdvance=s.teams.every(t=> t.squad.filter(p=>p.ruolo===role).length >= min);
+      nextRoleBtn.disabled=!canAdvance;
+      nextRoleBtn.style.opacity=canAdvance?'1':'0.45';
+      nextRoleBtn.style.cursor=canAdvance?'pointer':'not-allowed';
+      const isLastRole=!s.roleOrder[s.roleIndex+1];
+      const nextRoleName=isLastRole ? null : (ROLE_NAMES[s.roleOrder[s.roleIndex+1]]||s.roleOrder[s.roleIndex+1]);
+      if(isLastRole){
+        nextRoleBtn.textContent=`Chiudi l'asta`;
+        nextRoleBtn.title=canAdvance? `Chiudi l'asta` : `Serve minimo ${min} ${ROLE_NAMES[role]||role} per tutte le squadre`;
+      } else {
+        nextRoleBtn.textContent=`Passa a ${nextRoleName}`;
+        nextRoleBtn.title=canAdvance? `Passa a ${nextRoleName}` : `Serve minimo ${min} ${ROLE_NAMES[role]||role} per tutte le squadre`;
+      }
+    }
+  }
+  renderFilters(); renderPlayers(); renderAssign();
+  if(document.getElementById('rosterModal').classList.contains('hidden')===false) renderRosterGrid();
+  if(document.getElementById('teamsOverviewModal').classList.contains('hidden')===false) renderTeamsOverview();
+}
+socket.on('state', handleState);
+function showAssignedOverlay(data){
+  assignedDisplay=data;
+  clearTimeout(assignedTimeout);
+  const p=data.player;
+  const filled=document.getElementById('filledState'), empty=document.getElementById('emptyState'), img=document.getElementById('playerPhoto'), timer=document.getElementById('timer'), actionBtn=document.getElementById('actionBtn');
+  if(p && filled && empty){
+    empty.classList.add('hidden');
+    filled.classList.remove('hidden'); filled.style.display='flex';
+    if(p.card){ img.src=p.card; img.classList.remove('hidden-img'); img.onerror=function(){ img.classList.add('hidden-img'); }; } else img.classList.add('hidden-img');
+    const nEl=document.getElementById('playerName'); if(nEl) nEl.textContent=p.nome||'—';
+    const sqEl=document.getElementById('playerSquadra'); if(sqEl) sqEl.textContent=p.squadra||'';
+    const dot=document.getElementById('playerRoleDot'); if(dot){ dot.textContent=p.ruolo||'—'; dot.className='role-dot '+(p.ruolo||''); }
+    const rt=document.getElementById('playerRoleTxt'); if(rt) rt.textContent=({P:'Portieri',D:'Difensori',C:'Centrocampisti',A:'Attaccanti'}[p.ruolo]||p.ruolo||'—');
+    const fvm=document.getElementById('playerFvm'); if(fvm) fvm.textContent=p.valutazione!=null?String(p.valutazione):'—';
+    const bidEl=document.getElementById('currentBid'); if(bidEl) bidEl.textContent=data.prezzo!=null?String(data.prezzo):'—';
+    const bidderEl=document.getElementById('currentBidder'); if(bidderEl) bidderEl.textContent=data.team||'—';
+    if(timer){ timer.textContent='GIOCATORE ASSEGNATO'; timer.classList.remove('hidden-t','danger'); timer.style.setProperty('font-size','13px','important'); timer.style.setProperty('letter-spacing','1.8px','important'); timer.style.setProperty('color','var(--accent)','important'); timer.style.setProperty('text-shadow','0 1px 8px rgba(0,230,184,.25)','important'); timer.style.setProperty('min-width','auto','important'); timer.style.setProperty('font-weight','800','important'); timer.style.setProperty('line-height','1.4','important'); timer.style.setProperty('white-space','normal','important'); timer.style.setProperty('word-break','break-word','important'); timer.style.setProperty('text-align','center','important'); timer.style.setProperty('padding','6px 0','important'); timer.style.setProperty('max-width','100%','important'); }
+    if(actionBtn) actionBtn.style.display='none';
+    const skipBtn=document.getElementById('skipAuctionBtn'); if(skipBtn) skipBtn.style.display='none';
+    const nextBtn=document.getElementById('nextRoleBtn'); if(nextBtn) nextBtn.style.display='none';
+    const oldBanner=document.getElementById('injectedBanner'); if(oldBanner) oldBanner.remove();
+    const oldPending=document.getElementById('pendingNotice'); if(oldPending) oldPending.remove();
+    const pc=document.getElementById('playerCard'); if(pc){ pc.classList.remove('role-P','role-D','role-C','role-A'); if(p.ruolo) pc.classList.add('role-'+p.ruolo); }
+  }
+  assignedTimeout=setTimeout(function(){
+    assignedDisplay=null;
+    const t=document.getElementById('timer');
+    if(t){
+      t.style.removeProperty('font-size'); t.style.removeProperty('letter-spacing'); t.style.removeProperty('color'); t.style.removeProperty('text-shadow'); t.style.removeProperty('min-width'); t.style.removeProperty('font-weight'); t.style.removeProperty('line-height'); t.style.removeProperty('white-space'); t.style.removeProperty('word-break'); t.style.removeProperty('text-align'); t.style.removeProperty('padding'); t.style.removeProperty('max-width');
+    }
+    if(latest) handleState(latest);
+  }, 5500);
+}
+socket.on('assigned', function(data){ try{ playLong(); }catch(e){} showAssignedOverlay(data); });
+socket.on('unsold', function(){ /* per ora nessun overlay per invenduto */ });
+socket.on('tick', function(data){
+  const secondsLeft=data.secondsLeft;
+  const el=document.getElementById('timer');
+  if(!el) return;
+  if(assignedDisplay){
+    el.textContent='GIOCATORE ASSEGNATO';
+    el.classList.remove('danger');
+    return;
+  }
+  el.textContent=secondsLeft;
+  el.classList.toggle('danger', secondsLeft<=3);
+  // suono cronometro nuoto — basso, cadenza 1s
+  if(lastBeepSecond!==secondsLeft){
+    if(secondsLeft===3||secondsLeft===2||secondsLeft===1) playShort();
+    else if(secondsLeft===0) playLong();
+    lastBeepSecond=secondsLeft;
+  }
+});
+</script>
+</body>
+</html>
